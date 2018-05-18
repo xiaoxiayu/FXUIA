@@ -1,0 +1,167 @@
+// Copyright 2015, Google Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//     * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//     * Neither the name of Google Inc. nor the names of its
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.helloworld";
+option java_outer_classname = "HelloWorldProto";
+option objc_class_prefix = "HLW";
+
+package imageprocess;
+
+// The greeting service definition.
+service Image {
+  // Sends a greeting
+  rpc Info (StringReq) returns (StringReply) {}
+  rpc Draw (ImgRequest) returns (ImgReply) {}
+  rpc DetectElements (DetectImg) returns (stream ElementRect) {}
+  rpc DetectSimilarity (CmpImgRequest) returns (stream DMatchPos) {}
+  rpc DrawSimilarity(CmpImgRequest) returns (CmpImgReply) {}
+  rpc OCR (ImgRequest) returns (TxtReply) {}
+  rpc FindImage (FindImgRequest) returns (ElementPos) {}
+  rpc GetBrightnessHistArray (ImgRequest) returns (stream HistBarData) {}
+  rpc GetDiffRect (CmpImgRequest) returns (ElementRect) {}
+  rpc CompareColorHist (CmpImgRequest) returns (FloatReply) {}
+  rpc Filter2D (FilterRequest) returns (ImgReply) {}
+}
+
+message IntRequest {
+	int32 i = 1;
+}
+
+message BoolReply {
+	bool b = 1;
+}
+
+message StringReply {
+	bytes replystr = 1;
+}
+
+message FloatReply {
+	float data = 1;
+}
+
+message StringReq {
+	bytes reqstr = 1;
+}
+
+message ImgRequest {
+  bytes imgobj = 1;
+}
+
+message FilterRequest {
+  bytes imgobj = 1;
+  bytes matrix = 2;
+}
+
+message Blur {
+	int32 x = 1;
+	int32 y = 2;
+}
+
+message FilterP {
+	bool enable = 1;
+	float zoom = 2;
+	int32 core = 3;
+}
+
+message DetectImg {
+	bytes imgobj = 1;
+	int32 thresh = 2;
+	Blur blur = 3;
+	FilterP filter = 4;
+}
+
+// The response message containing the greetings
+message ImgReply {
+  bytes imgobj = 1;
+}
+
+message OcrRequest {
+  bytes imgobj = 1;
+  int32 thresh = 2;
+}
+
+message FindImgRequest {
+  bytes imgobj = 1;
+  bytes templateobj = 2;
+  int32 matchvalue = 3;
+}
+
+message CmpImgRequest {
+	bytes orgimgobj = 1;
+	bytes cmpimgobj = 2;
+	Blur blur = 3;
+	int32 filter_core = 4;
+	float feature_matching_distance = 5;
+	int32 disparities = 6;
+}
+
+message CmpImgReply {
+	int32 dp = 1;
+	bytes imgobj = 2;
+}
+
+message TxtReply {
+  string txt = 1;
+}
+
+message ElementRect {
+	int32 x = 1;
+	int32 y = 2;
+	int32 w = 3;
+	int32 h = 4;
+}
+
+message ElementPos {
+	int32 x0 = 1;
+	int32 y0 = 2;
+	int32 x1 = 3;
+	int32 y1 = 4;
+}
+
+message HistBarData {
+	int32 x = 1;
+	int32 y = 2;
+}
+
+message DMatch {
+	float distance = 1;
+	int32 trainIdx = 2;
+	int32 queryIdx = 3;
+	int32 imgIdx = 4;
+}
+
+message DMatchPos {
+	float x0 = 1;
+	float y0 = 2;
+	float x1 = 3;
+	float y1 = 4;
+}

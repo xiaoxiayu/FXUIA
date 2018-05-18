@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: platform-image
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: platform-image
+    spec:
+      containers:
+      - name: platform-image
+        image: 10.103.129.81:5000/fxqaimage:latest
+        ports:
+        - containerPort: 50051
+      nodeSelector:
+        SET: platform
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: platform-image-rpc
+  labels:
+    run: platform-image-rpc
+spec:
+  type: NodePort
+  ports:
+  - port: 50051
+    protocol: TCP
+    nodePort: 32454
+  selector:
+    run: platform-image
